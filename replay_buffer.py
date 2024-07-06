@@ -13,6 +13,10 @@ class ReplayBuffer:
     def extend(self, experiences:list) -> None:
         self.buffer.extend(experiences)
 
+    def clear_oldest(self, N:int):
+        for _ in range(N):
+            self.buffer.popleft()
+
     def sample(self, batch_size:int = 32):
         return random.sample(self.buffer, batch_size)
     

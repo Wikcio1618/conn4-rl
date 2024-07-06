@@ -1,14 +1,21 @@
 import numpy as np
 
 class Board:
-    def __init__(self, height=6, width=7, draw_reward = 0.3, win_reward = 1):
+
+    rewards_dict = {
+        'win': 1,
+        'draw': 0.3,
+        'loss': -0.3,
+        'illegal_move': -1,
+        'valid_move': 0.05
+    }
+
+    def __init__(self, height=6, width=7):
         self.height = height
         self.width = width
-        self.draw_reward = draw_reward
-        self.win_reward = win_reward
-        self.pieces = np.zeros((height, width))
+        self.pieces = np.zeros((height, width), dtype=np.int8)
 
-    def check_winner(self, move:tuple, player) -> bool:
+    def check_winner(self, move:tuple, piece_tag) -> bool:
         """
         move - (row, col)
         True - winning move
@@ -23,16 +30,16 @@ class Board:
         lines.append(np.diagonal(np.fliplr(self.pieces), offset=(self.width - col - row - 1)))
         
         for line in lines:
-            if self.check_line(line, player):
+            if self.check_line(line, piece_tag):
                 return True
             
         return False
 
-    def check_line(self, line, player):
+    def check_line(self, line, piece_tag):
     # Check if there are four consecutive pieces of the same player in the line
         count = 0
         for cell in line:
-            if cell == player:
+            if cell == piece_tag:
                 count += 1
                 if count == 4:
                     return True
@@ -49,27 +56,30 @@ class Board:
     def is_board_full(self):
         return np.all(self.pieces[0] != 0)
     
-    def drop_piece(self, col, player:int):
+    def drop_piece(self, col, piece_tag) -> tuple:
         """
         returns:
-        next_state, reward, done
+        `reward`: val - according to `reward_dict`\n
         """
         assert col >= 0 and col < self.width
 
+        if not self.is_valid_move(col):
+            return Board.rewards_dict['illegal_move']
+
         for i in range(self.height - 1, -1, -1):
             if self.pieces[i, col] == 0:
-                self.pieces[i, col] = player
+                self.pieces[i, col] = piece_tag
                 row = i
                 break
         
-        if self.check_winner((row, col), player):
-            reward = self.win_reward
+        if self.check_winner((row, col), piece_tag):
+            reward = Board.rewards_dict['win']
         elif self.is_board_full():
-            reward = self.draw_reward
-        else: 
-            reward = 0
+            reward = Board.rewards_dict['draw']
+        else:
+            reward = Board.rewards_dict['valid_move']
 
-        return (self.pieces.copy(), reward, (reward != 0))
+        return reward
     
     def reset_board(self) -> None:
-        self.pieces = np.zeros((self.height, self.width))
+        self.pieces = np.zeros_like(self.pieces)

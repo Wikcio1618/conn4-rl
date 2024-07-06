@@ -5,6 +5,7 @@ import numpy as np
 from board import Board
 from model import ConnectFourNN
 import torch
+import sys
 
 class ConnectFourGUI:
     def __init__(self):
@@ -14,7 +15,7 @@ class ConnectFourGUI:
         self.board = Board()
         self.model = ConnectFourNN()
         # self.model.set_parameters_from_file('10.01.24/check3.txt')
-        self.model = torch.load("models/red_cp5_050724-055355.pth")
+        self.model = torch.load(sys.argv[1])
 
         self.buttons = []
         self.fields = []
@@ -31,18 +32,18 @@ class ConnectFourGUI:
 
     def make_move(self, col):
         if self.board.is_valid_move(col) and not self.board.is_board_full():
-            _, _, done = self.board.drop_piece(col, player=1)  # Assuming player 1 for the user
+            reward = self.board.drop_piece(col, 1)  # Assuming player 1 for the user
             self.update_gui()
 
             # Check for a winner
-            if done:
+            if reward == Board.rewards_dict['win']:
                 messagebox.showinfo("Game Over", "You win!")
                 self.reset_game()
 
             # Check for a tie
-            # elif self.board.is_board_full():
-            #     messagebox.showinfo("Game Over", "It's a tie!")
-            #     self.reset_game()
+            elif reward == Board.rewards_dict['draw']:
+                messagebox.showinfo("Game Over", "It's a tie!")
+                self.reset_game()
 
             # AI's move (replace with your AI logic)
             else:
@@ -56,10 +57,10 @@ class ConnectFourGUI:
                 ai_col = np.argmax(predictions.numpy())
 
                 if self.board.is_valid_move(ai_col):
-                    _, _, done = self.board.drop_piece(ai_col, player=2)  # Assuming player 2 for the AI
+                    reward = self.board.drop_piece(ai_col, 2)  # Assuming player 2 for the AI
                     self.update_gui()
                     # Check for AI win
-                    if done:
+                    if reward == Board.rewards_dict['win']:
                         messagebox.showinfo("Game Over", "AI wins!")
                         self.reset_game()
                 else:
