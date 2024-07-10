@@ -1,8 +1,10 @@
+import random
 import numpy as np
 from board import Board
 from replay_buffer import ReplayBuffer
 import torch.nn as nn
 import torch
+import torch.nn.functional as F
 
 class Agent:
     def __init__(self, main_model:nn.Module, piece_tag:int, board:Board=None):
@@ -43,11 +45,20 @@ class Agent:
             else:
                 with torch.no_grad():
                     actions = self.get_actions_pred(state)
+                    
                     best_action = actions.argmax().item()
                     return best_action
                 
         elif type == 'softmax':
-            pass
+            # needs to be tested
+            preds_proba = self.get_actions_pred(state)
+            thresh = 0
+            for action, proba in enumerate(preds_proba):
+                thresh += proba
+                if random.random() < thresh:
+                    return action
+            
+
 
     def perform_action(self, action:int):
         """
@@ -55,7 +66,7 @@ class Agent:
         `reward`
         """
 
-        reward = self.board.drop_piece(col = action,piece_tag = self.piece_tag)
+        reward = self.board.drop_piece(col = action, piece_tag = self.piece_tag)
         return reward
 
     def get_actions_pred(self, state:np.ndarray):
@@ -63,4 +74,7 @@ class Agent:
         state_tensor = torch.tensor(state, dtype=torch.float32).unsqueeze(0).unsqueeze(0)
         with torch.no_grad():
             preds = self.main_model(state_tensor)
-        return preds
+            # https://ai.stackexchange.com/questions/2980/how-should-i-handle-invalid-actions-when-using-reinforce
+            masked_preds = torch.log(torch.tensor(self.board.get_valid_moves_mask())) + preds
+            preds_proba = F.softmax(masked_preds.squeeze(), dim=0)
+        return preds_proba

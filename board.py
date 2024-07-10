@@ -5,9 +5,9 @@ class Board:
     rewards_dict = {
         'win': 1,
         'draw': 0.3,
-        'loss': -0.3,
+        'loss': -1,
         'illegal_move': -1,
-        'valid_move': 0.05
+        'valid_move': 0
     }
 
     def __init__(self, height=6, width=7):
@@ -48,13 +48,13 @@ class Board:
         return False
     
     def is_valid_move(self, col):
-        if self.pieces[0, col] == 0:
-            return True
-        
-        return False
+        return self.pieces[0, col] == 0
     
     def is_board_full(self):
         return np.all(self.pieces[0] != 0)
+    
+    def get_valid_moves_mask(self):
+        return np.array([self.is_valid_move(col) for col in range(self.width)], dtype=np.int8)
     
     def drop_piece(self, col, piece_tag) -> tuple:
         """

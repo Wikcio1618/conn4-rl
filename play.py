@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import messagebox
 from functools import partial
 import numpy as np
+from agent import Agent
 from board import Board
 from model import ConnectFourNN
 import torch
@@ -14,8 +15,8 @@ class ConnectFourGUI:
 
         self.board = Board()
         self.model = ConnectFourNN()
-        # self.model.set_parameters_from_file('10.01.24/check3.txt')
-        self.model = torch.load(sys.argv[1])
+        self.model = torch.load(sys.argv[1], map_location=torch.device('cpu'))
+        self.ai_agent:Agent = Agent(self.model, piece_tag=2, board=self.board)
 
         self.buttons = []
         self.fields = []
@@ -29,6 +30,12 @@ class ConnectFourGUI:
                 button = tk.Button(self.root, text="", width=4, height=2)
                 button.grid(row=row+1, column=col)
                 self.fields.append(button)
+
+        self.q_labels = []
+        for col in range(self.board.width):
+            q_label = tk.Label(self.root, text="")
+            q_label.grid(row = 2 + self.board.height, column=col)
+            self.q_labels.append(q_label)
 
     def make_move(self, col):
         if self.board.is_valid_move(col) and not self.board.is_board_full():
@@ -47,17 +54,16 @@ class ConnectFourGUI:
 
             # AI's move (replace with your AI logic)
             else:
-                # Example: AI makes a random valid move
-                board_tensor = torch.tensor(self.board.pieces, dtype=torch.float32).unsqueeze(0).unsqueeze(0)  # Add batch and channel dimensions
-                # Put the model in evaluation mode
-                self.model.eval()
-                # Make a forward pass to obtain the predictions
-                with torch.no_grad():
-                    predictions = self.model(board_tensor)
-                ai_col = np.argmax(predictions.numpy())
+                board_state = self.ai_agent.get_board_state()
+                action = self.ai_agent.choose_action(board_state, eps=0)
+                actions_pred = self.ai_agent.get_actions_pred(board_state)
+                for col in range(self.board.width):
+                    # print(actions_pred.unsqueeze(1)[col].item())
+                    self.q_labels[col].config(text = f"{actions_pred.squeeze()[col].item():.2f}")
 
-                if self.board.is_valid_move(ai_col):
-                    reward = self.board.drop_piece(ai_col, 2)  # Assuming player 2 for the AI
+
+                if self.board.is_valid_move(action):
+                    reward = self.ai_agent.perform_action(action)  # Assuming player 2 for the AI
                     self.update_gui()
                     # Check for AI win
                     if reward == Board.rewards_dict['win']:
@@ -83,7 +89,9 @@ class ConnectFourGUI:
                     self.fields[field_idx].config(bg='white')
 
     def reset_game(self):
-        self.board = Board()
+        self.board.reset_board()
+        for col in range(self.board.width):
+            self.q_labels[col].config(text = "")
         self.update_gui()
 
     def run(self):
