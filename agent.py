@@ -7,11 +7,12 @@ import torch
 import torch.nn.functional as F
 
 class Agent:
-    def __init__(self, main_model:nn.Module, piece_tag:int, board:Board=None):
+    def __init__(self, main_model:nn.Module, piece_tag:int, device, board:Board=None):
         self.main_model = main_model
         if board is not None:
             self.board = board
         self.piece_tag = piece_tag
+        self.device = device
 
     def drop_piece(self, col):
         self.board.drop_piece(col, self.piece_tag)
@@ -71,10 +72,10 @@ class Agent:
 
     def get_actions_pred(self, state:np.ndarray):
         self.main_model.eval()
-        state_tensor = torch.tensor(state, dtype=torch.float32).unsqueeze(0).unsqueeze(0)
+        state_tensor = torch.tensor(state, dtype=torch.float32).unsqueeze(0).unsqueeze(0).to(self.device)
         with torch.no_grad():
             preds = self.main_model(state_tensor)
             # https://ai.stackexchange.com/questions/2980/how-should-i-handle-invalid-actions-when-using-reinforce
-            masked_preds = torch.log(torch.tensor(self.board.get_valid_moves_mask())) + preds
+            masked_preds = torch.log(torch.tensor(self.board.get_valid_moves_mask()).to(self.device)) + preds
             preds_proba = F.softmax(masked_preds.squeeze(), dim=0)
         return preds_proba

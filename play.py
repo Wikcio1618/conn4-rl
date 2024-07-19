@@ -16,7 +16,7 @@ class ConnectFourGUI:
         self.board = Board()
         self.model = ConnectFourNN()
         self.model = torch.load(sys.argv[1], map_location=torch.device('cpu'))
-        self.ai_agent:Agent = Agent(self.model, piece_tag=2, board=self.board)
+        self.ai_agent:Agent = Agent(self.model, piece_tag=2, board=self.board, device='cpu')
 
         self.buttons = []
         self.fields = []
