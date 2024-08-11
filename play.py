@@ -58,12 +58,11 @@ class ConnectFourGUI:
                 action = self.ai_agent.choose_action(board_state, eps=0)
                 actions_pred = self.ai_agent.get_actions_pred(board_state)
                 for col in range(self.board.width):
-                    # print(actions_pred.unsqueeze(1)[col].item())
                     self.q_labels[col].config(text = f"{actions_pred.squeeze()[col].item():.2f}")
 
 
                 if self.board.is_valid_move(action):
-                    reward = self.ai_agent.perform_action(action)  # Assuming player 2 for the AI
+                    reward = self.ai_agent.perform_action(action)
                     self.update_gui()
                     # Check for AI win
                     if reward == Board.rewards_dict['win']:
@@ -82,9 +81,9 @@ class ConnectFourGUI:
             for row in range(self.board.height):
                 field_idx = row * self.board.width + col
                 if self.board.pieces[row, col] == 1:
-                    self.fields[field_idx].config(bg='red')
-                elif self.board.pieces[row, col] == 2:
                     self.fields[field_idx].config(bg='yellow')
+                elif self.board.pieces[row, col] == 2:
+                    self.fields[field_idx].config(bg='red')
                 elif self.board.pieces[row, col] == 0:
                     self.fields[field_idx].config(bg='white')
 

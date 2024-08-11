@@ -4,7 +4,7 @@ import random
 # Experience = namedtuple("Experience", ['state', 'action', 'reward', 'new_state'])
 
 class ReplayBuffer:
-    def __init__(self, maxlen:int = 10**5) -> None:
+    def __init__(self, maxlen:int = 10**4) -> None:
         self.buffer = deque(maxlen=maxlen)
 
     def add(self, experience) -> None:

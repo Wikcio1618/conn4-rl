@@ -6,7 +6,7 @@ class Board:
         'win': 1,
         'draw': 0.3,
         'loss': -1,
-        'illegal_move': -1,
+        'illegal_move': 0,
         'valid_move': 0
     }
 
