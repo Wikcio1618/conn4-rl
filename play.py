@@ -97,5 +97,8 @@ class ConnectFourGUI:
         self.root.mainloop()
 
 if __name__ == "__main__":
-    gui = ConnectFourGUI()
-    gui.run()
+    if len(sys.argv) != 2:
+        print("You need to provide 1 argument: path to .pth model")
+    else:
+        gui = ConnectFourGUI()
+        gui.run()

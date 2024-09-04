@@ -10,10 +10,11 @@ class Board:
         'valid_move': 0
     }
 
-    def __init__(self, height=6, width=7):
-        self.height = height
-        self.width = width
-        self.pieces = np.zeros((height, width), dtype=np.int8)
+    height = 6
+    width = 7
+
+    def __init__(self):
+        self.pieces = np.zeros((self.height, self.width), dtype=np.int8)
 
     def check_winner(self, move:tuple, piece_tag) -> bool:
         """
