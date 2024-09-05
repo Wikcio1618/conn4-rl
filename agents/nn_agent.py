@@ -73,11 +73,8 @@ class NNAgent(Agent):
         with torch.no_grad():
             preds = self.main_model(state_tensor)
             # https://ai.stackexchange.com/questions/2980/how-should-i-handle-invalid-actions-when-using-reinforce
-            print(preds)
-            print(Board.get_valid_moves_mask(state))
             masked_preds = torch.log(torch.tensor(Board.get_valid_moves_mask(state)).to(self.device)) + preds
             preds_proba = F.softmax(masked_preds.squeeze(), dim=0)
-            print(preds_proba)
         return preds_proba
     
     def store_memory(self, experience) -> None:
