@@ -84,4 +84,4 @@ class Board:
 
     @classmethod
     def get_valid_moves_mask(cls, state:np.ndarray|torch.Tensor) -> np.ndarray:
-        return np.array(state[0] != 0, dtype=np.int8)
+        return np.array(state[0] == 0, dtype=np.int8)

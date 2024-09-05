@@ -55,10 +55,9 @@ class ConnectFourGUI:
             else:
                 board_state = Agent.get_board_representation(self.board, piece_tag=2)
                 action = self.ai_agent.choose_action(state=board_state, eps=0)
-                actions_pred = self.ai_agent.get_masked_actions_proba(self.board, board_state)
+                actions_pred = self.ai_agent.get_masked_actions_proba(board_state)
                 for col in range(self.board.width):
                     self.q_labels[col].config(text = f"{actions_pred.squeeze()[col].item():.2f}")
-
 
                 if self.board.is_valid_move(action):
                     reward = self.board.drop_piece(action, piece_tag=2)
