@@ -8,9 +8,9 @@ class ReplayBuffer:
         self.buffer = deque(maxlen=maxlen)
 
     def add(self, experience) -> None:
-        deque.append(experience)
+        self.buffer.append(experience)
 
-    def extend(self, experiences:list) -> None:
+    def extend(self, experiences) -> None:
         self.buffer.extend(experiences)
 
     def clear_oldest(self, N:int):

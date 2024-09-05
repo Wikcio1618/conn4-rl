@@ -9,7 +9,6 @@ class Board:
         'illegal_move': 0,
         'valid_move': 0
     }
-
     height = 6
     width = 7
 
@@ -63,9 +62,6 @@ class Board:
         `reward`: val - according to `reward_dict`\n
         """
         assert col >= 0 and col < self.width
-
-        if not self.is_valid_move(col):
-            return Board.rewards_dict['illegal_move']
 
         for i in range(self.height - 1, -1, -1):
             if self.pieces[i, col] == 0:

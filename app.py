@@ -54,9 +54,9 @@ class ConnectFourGUI:
 
             # AI's move (replace with your AI logic)
             else:
-                board_state = self.ai_agent.get_board_state()
+                board_state = self.ai_agent.get_board_representation()
                 action = self.ai_agent.choose_action(board_state, eps=0)
-                actions_pred = self.ai_agent.get_actions_pred(board_state)
+                actions_pred = self.ai_agent.get_masked_actions_proba(board_state)
                 for col in range(self.board.width):
                     self.q_labels[col].config(text = f"{actions_pred.squeeze()[col].item():.2f}")
 
