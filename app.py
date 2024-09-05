@@ -2,7 +2,8 @@ import tkinter as tk
 from tkinter import messagebox
 from functools import partial
 import numpy as np
-from agent import Agent
+from agents.agent import Agent
+from agents.nn_agent import NNAgent
 from board import Board
 from model import ConnectFourNN
 import torch
@@ -14,9 +15,7 @@ class ConnectFourGUI:
         self.root.title("Connect Four")
 
         self.board = Board()
-        self.model = ConnectFourNN()
-        self.model = torch.load(sys.argv[1], map_location=torch.device('cpu'))
-        self.ai_agent:Agent = Agent(self.model, piece_tag=2, board=self.board, device='cpu')
+        self.ai_agent:NNAgent = NNAgent.from_file(sys.argv[1])
 
         self.buttons = []
         self.fields = []
@@ -54,15 +53,16 @@ class ConnectFourGUI:
 
             # AI's move (replace with your AI logic)
             else:
-                board_state = self.ai_agent.get_board_representation()
-                action = self.ai_agent.choose_action(board_state, eps=0)
-                actions_pred = self.ai_agent.get_masked_actions_proba(board_state)
+                board_state = Agent.get_board_representation(self.board, piece_tag=2)
+                action = self.ai_agent.choose_action(state=board_state, eps=0)
+                actions_pred = self.ai_agent.get_masked_actions_proba(self.board, board_state)
                 for col in range(self.board.width):
                     self.q_labels[col].config(text = f"{actions_pred.squeeze()[col].item():.2f}")
 
 
                 if self.board.is_valid_move(action):
-                    reward = self.ai_agent.perform_action(action)
+                    reward = self.board.drop_piece(action, piece_tag=2)
+
                     self.update_gui()
                     # Check for AI win
                     if reward == Board.rewards_dict['win']:
