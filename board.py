@@ -1,4 +1,5 @@
 import numpy as np
+import torch
 
 class Board:
 
@@ -80,3 +81,7 @@ class Board:
     
     def reset_board(self) -> None:
         self.pieces = np.zeros_like(self.pieces)
+
+    @classmethod
+    def get_valid_moves_mask(cls, state:np.ndarray|torch.Tensor) -> np.ndarray:
+        return np.array(state[0] != 0, dtype=np.int8)
