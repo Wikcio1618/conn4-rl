@@ -80,21 +80,22 @@ class NNAgent(Agent):
     def store_memory(self, experience) -> None:
         pass
 
-    def get_action_qval(self, states:np.ndarray|None = None, actions = (2, 2, 2)):
+    def get_action_qval(self, states:np.ndarray|None = None, actions = (2, 6, 2, 2)):
         """
         For a list of `states`, return best q_values estimated by the `model` 
         """
 
         if states is None:
             states = np.array([
-                np.array([
-                    [0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0],
-                ], dtype=np.int8),
+                
+                # np.array([
+                #     [0, 0, 0, 0, 0, 0, 0],
+                #     [0, 0, 0, 0, 0, 0, 0],
+                #     [0, 0, 0, 0, 0, 0, 0],
+                #     [0, 0, 0, 0, 0, 0, 0],
+                #     [0, 0, 0, 0, 0, 0, 0],
+                #     [0, 0, 0, 0, 0, 0, 0],
+                # ], dtype=np.int8),
                 np.array([
                     [0, 0, 0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0, 0, 0],
@@ -102,6 +103,22 @@ class NNAgent(Agent):
                     [0, 0, 1, 0, 0, 0, 0],
                     [0, 0, 1, -1, 0, 0, 0],
                     [0, 0, 1, -1, -1, 0, 0],
+                ], dtype=np.int8),
+                np.array([
+                    [-1, 1, -1, 1, 0, 1, 0],
+                    [1, 1, -1, 1, 0, 1, 1],
+                    [-1, -1, 1, 1, 0, -1, -1],
+                    [1, 1, 1, -1, 0, 1, 1],
+                    [-1, -1, -1, 1, -1, -1, -1],
+                    [-1, -1, 1, -1, -1, -1, 1],
+                ], dtype=np.int8),
+                np.array([
+                    [0, 0, 0, 0, 0, 0, 0],
+                    [1, -1, 1, 0, 1, 0, 0],
+                    [-1, 1, -1, 0, 1, 1, 0],
+                    [1, -1, -1, 0, -1, -1, 0],
+                    [1, -1, 1, 0, -1, 1, -1],
+                    [1, -1, -1, -1, 1, -1, 1],
                 ], dtype=np.int8),
                 np.array([
                     [0, 0, 0, 0, 0, 0, 0],
