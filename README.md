@@ -7,9 +7,9 @@ This project was my free-time, hobby affair.
 * Practicing operational duties in model developement (fine-tuning etc.)
 
 ### Project structure
-In _agents_ folder, there are classes for different types of models. Most important one is Learning Agent, who is able to play games and backpropagate gradients on its network
-_play.py_ file is to be run to play a game with chosen agent. First command line argument should be path to .pth/.pt file
-_lab.ipynb_ file is where training loop is implemented
+* In _agents_ folder, there are classes for different types of models. Most important one is Learning Agent, who is able to play games and backpropagate gradients on its network
+* _play.py_ file is to be run to play a game with chosen agent. First command line argument should be path to .pth/.pt file
+* _lab.ipynb_ file is where training loop is implemented
 
 ### Obstacles and outcomes
 * The greatest obstacle for me was lack of good GPU and long execution time
