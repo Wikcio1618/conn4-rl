@@ -1,4 +1,4 @@
-# Reinforcement Lenraning project - Connect4 with Deep Q-Network (DQN)
+# Reinforcement Learning project - Connect4 with Deep Q-Network (DQN)
 This project was my free-time, hobby affair. 
 
 ### Aims
